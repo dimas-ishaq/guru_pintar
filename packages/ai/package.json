@@ -1,0 +1,14 @@
+{
+  "name": "@guru-pintar/ai",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "openai": "^4.28.0",
+    "@guru-pintar/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
