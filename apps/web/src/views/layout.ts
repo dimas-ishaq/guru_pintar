@@ -23,7 +23,7 @@ export function renderPage(viewContent: string): string {
   </style>
   <script>${appScript()}</script>
 </head>
-<body class="bg-background dark:bg-slate-950 text-on-background dark:text-slate-200 antialiased transition-colors duration-300" x-data="app()" x-init="init()">
+<body class="bg-background dark:bg-slate-950 text-on-background dark:text-slate-200 antialiased transition-colors duration-300" x-data="app" x-init="init()">
 
   ${sidebarHtml()}
   ${headerHtml()}

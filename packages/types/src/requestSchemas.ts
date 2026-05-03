@@ -54,6 +54,24 @@ export const KKTPInputSchema = z.object({
   tp: z.string(),
 });
 
+export const LKPDInputSchema = z.object({
+  subject: z.string(),
+  grade: z.string(),
+  topic: z.string(),
+  cp: z.string(),
+  activityType: z.string().default('individu'),
+  meetings: z.string().default('1'),
+});
+
+export const EssayInputSchema = z.object({
+  subject: z.string(),
+  topic: z.string(),
+  learningGoal: z.string(),
+  stimulusType: z.enum(['teks', 'skenario', 'data', 'kasus']),
+  questionLevel: z.enum(['L2', 'L3']),
+  totalQuestions: z.number().min(1).max(5),
+});
+
 export const SaveAnalisisCPInputSchema = z.object({
   title: z.string(),
   content: z.string(),
@@ -91,5 +109,6 @@ export type ProtaInput = z.infer<typeof ProtaInputSchema>;
 export type ProsemInput = z.infer<typeof ProsemInputSchema>;
 export type ModulAjarInput = z.infer<typeof ModulAjarInputSchema>;
 export type KKTPInput = z.infer<typeof KKTPInputSchema>;
+export type LKPDInput = z.infer<typeof LKPDInputSchema>;
 export type SaveAnalisisCPInput = z.infer<typeof SaveAnalisisCPInputSchema>;
 export type CreateSubjectInput = z.infer<typeof CreateSubjectInputSchema>;

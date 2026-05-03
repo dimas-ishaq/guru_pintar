@@ -31,42 +31,42 @@ export function analisisCPView(): string {
             <!-- Nama Sekolah -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Nama Sekolah</label>
-              <input type="text" x-model="cpForm.nama_sekolah" placeholder="Contoh: SMK Negeri 1 Jakarta" 
+              <input type="text" x-model="cpForm.nama_sekolah" placeholder="Contoh: SMK Negeri 1 Jakarta"
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Nama Guru -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Nama Guru Pengampu</label>
-              <input type="text" x-model="cpForm.nama_guru" placeholder="Contoh: Ahmad Subardjo, S.Kom" 
+              <input type="text" x-model="cpForm.nama_guru" placeholder="Contoh: Ahmad Subardjo, S.Kom"
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Nama Kepala Sekolah -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Nama Kepala Sekolah</label>
-              <input type="text" x-model="cpForm.nama_kepsek" placeholder="Nama Kepala Sekolah & Gelar" 
+              <input type="text" x-model="cpForm.nama_kepsek" placeholder="Nama Kepala Sekolah & Gelar"
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Tahun Ajaran -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tahun Ajaran</label>
-              <input type="text" x-model="cpForm.tahun_ajaran" placeholder="2024/2025" 
+              <input type="text" x-model="cpForm.tahun_ajaran" placeholder="2024/2025"
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Mata Pelajaran -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Mata Pelajaran</label>
-              <input type="text" x-model="cpForm.mapel" placeholder="Contoh: Matematika" required 
+              <input type="text" x-model="cpForm.mapel" placeholder="Contoh: Matematika" required
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Kurikulum -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Kurikulum</label>
-              <select x-model="cpForm.kurikulum" 
+              <select x-model="cpForm.kurikulum"
                 class="form-select block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 font-medium">
                 <option value="Merdeka">Kurikulum Merdeka</option>
                 <option value="K13">Kurikulum 2013 (K13)</option>
@@ -76,7 +76,7 @@ export function analisisCPView(): string {
             <!-- Fase / Kelas -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Fase / Kelas</label>
-              <select x-model="cpForm.fase" required 
+              <select x-model="cpForm.fase" required
                 class="form-select block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 font-medium">
                 <option value="">Pilih Fase</option>
                 <optgroup label="Sekolah Dasar (SD)">
@@ -94,10 +94,17 @@ export function analisisCPView(): string {
               </select>
             </div>
 
+            <!-- Jurusan (Opsional) -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Jurusan <span class="text-xs text-slate-400 font-normal">(Opsional)</span></label>
+              <input type="text" x-model="cpForm.jurusan" placeholder="Contoh: PPLG, TKJ, TJKT"
+                class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
+            </div>
+
             <!-- Mode Analisis -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Mode Analisis</label>
-              <select x-model="cpForm.mode" 
+              <select x-model="cpForm.mode"
                 class="form-select block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 font-medium">
                 <option value="Tahunan">Tahunan (Penuh)</option>
                 <option value="Semester">Semester (Parsial)</option>
@@ -107,21 +114,21 @@ export function analisisCPView(): string {
             <!-- Alokasi JP -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Alokasi Waktu (JP)</label>
-              <input type="number" x-model="cpForm.jp" placeholder="72" 
+              <input type="number" x-model="cpForm.jp" placeholder="72"
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Menit / JP -->
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Durasi (Menit/JP)</label>
-              <input type="number" x-model="cpForm.jp_duration" placeholder="45" 
+              <input type="number" x-model="cpForm.jp_duration" placeholder="45"
                 class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50">
             </div>
 
             <!-- Semester (Conditional) -->
             <div class="flex flex-col gap-2" x-show="cpForm.mode === 'Semester'">
               <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Pilih Semester</label>
-              <select x-model="cpForm.semester" 
+              <select x-model="cpForm.semester"
                 class="form-select block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 font-medium">
                 <option value="1">Semester 1 (Ganjil)</option>
                 <option value="2">Semester 2 (Genap)</option>
@@ -142,7 +149,7 @@ export function analisisCPView(): string {
                 <p class="text-sm text-slate-500 font-medium tracking-tight leading-none">Klik tombol tambah untuk setiap elemen kompetensi</p>
               </div>
             </div>
-            <button type="button" @click="addElement()" 
+            <button type="button" @click="addElement()"
               class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-bold rounded-xl shadow-sm text-white bg-primary hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all">
               <span class="material-symbols-outlined mr-2 text-lg">add_circle</span>
               Tambah Elemen
@@ -158,7 +165,7 @@ export function analisisCPView(): string {
                     <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white text-xs font-black" x-text="index + 1"></span>
                     <span class="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">Detail Elemen</span>
                   </div>
-                  <button type="button" @click="removeElement(index)" 
+                  <button type="button" @click="removeElement(index)"
                     class="p-2 text-slate-400 hover:text-red-500 transition-colors">
                     <span class="material-symbols-outlined text-xl">close</span>
                   </button>
@@ -167,12 +174,12 @@ export function analisisCPView(): string {
                 <div class="flex flex-col gap-4">
                   <div class="flex flex-col gap-2">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-tight ml-1">Nama Elemen</label>
-                    <input type="text" x-model="elements[index].name" placeholder="Misal: Berpikir Komputasional" 
+                    <input type="text" x-model="elements[index].name" placeholder="Misal: Berpikir Komputasional"
                       class="form-input block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20">
                   </div>
                   <div class="flex flex-col gap-2">
                     <label class="text-xs font-bold text-slate-500 uppercase tracking-tight ml-1">Teks Capaian Pembelajaran (CP)</label>
-                    <textarea x-model="item.cp" placeholder="Tempel teks CP di sini..." rows="4" 
+                    <textarea x-model="item.cp" placeholder="Tempel teks CP di sini..." rows="4"
                       class="form-textarea block w-full rounded-xl border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:text-white shadow-sm focus:border-primary focus:ring focus:ring-primary/20"></textarea>
                   </div>
 
@@ -182,8 +189,8 @@ export function analisisCPView(): string {
                       <span class="material-symbols-outlined text-indigo-500 text-sm">inventory_2</span>
                       <label class="text-[11px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Materi / Topik Utama (Opsional)</label>
                     </div>
-                    <input type="text" x-model="item.materi" 
-                      placeholder="Contoh: Tipe Data, Logika Proposisi, atau Algoritma..." 
+                    <input type="text" x-model="item.materi"
+                      placeholder="Contoh: Tipe Data, Logika Proposisi, atau Algoritma..."
                       class="form-input block w-full rounded-xl border-white dark:border-slate-700 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm py-2.5 dark:bg-slate-800">
                     <p class="text-[10px] text-slate-400 mt-2 italic">Kosongkan jika ingin AI menganalisis materi secara otomatis dari teks CP di atas.</p>
                   </div>
@@ -195,12 +202,12 @@ export function analisisCPView(): string {
 
         <!-- Submit & Reset Buttons -->
         <div class="flex flex-col md:flex-row items-center justify-center gap-4 pt-6">
-          <button @click="generateATP()" :disabled="isAnalyzing" 
+          <button @click="generateATP()" :disabled="isAnalyzing"
             class="inline-flex items-center px-10 py-4 border border-transparent text-lg font-bold rounded-2xl shadow-xl text-white bg-primary hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition-all group w-full md:w-auto">
             <span class="material-symbols-outlined mr-3 text-2xl group-hover:rotate-12 transition-transform" x-text="isAnalyzing ? 'sync' : 'auto_awesome'"></span>
             <span x-text="isAnalyzing ? 'Menganalisis...' : 'Mulai Analisis AI'"></span>
           </button>
-          
+
           <button @click="resetForm()" :disabled="isAnalyzing"
             class="inline-flex items-center px-8 py-4 border-2 border-slate-200 dark:border-slate-700 text-lg font-bold rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none transition-all w-full md:w-auto">
             <span class="material-symbols-outlined mr-2">restart_alt</span>
@@ -212,7 +219,7 @@ export function analisisCPView(): string {
       <!-- 3. HASIL ANALISIS (BAWAH) -->
       <div id="results-section" class="w-full flex flex-col gap-10">
         <!-- Empty State -->
-        <div x-show="!analisisResult && !isAnalyzing" 
+        <div x-show="!analisisResult && !isAnalyzing"
           class="p-20 flex flex-col items-center justify-center text-center bg-slate-50 dark:bg-slate-800/20 rounded-[2.5rem] border-4 border-dashed border-slate-200 dark:border-slate-800">
           <div class="w-24 h-24 bg-white dark:bg-slate-900 rounded-full flex items-center justify-center shadow-lg mb-6">
             <span class="material-symbols-outlined text-5xl text-slate-300 dark:text-slate-700">inventory</span>
@@ -222,7 +229,7 @@ export function analisisCPView(): string {
         </div>
 
         <!-- Loading State -->
-        <div x-show="isAnalyzing" 
+        <div x-show="isAnalyzing"
           class="p-20 flex flex-col items-center justify-center text-center bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm">
           <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-6"></div>
           <h4 class="text-2xl font-black text-on-surface dark:text-white">AI Sedang Merumuskan...</h4>
@@ -290,7 +297,7 @@ export function analisisCPView(): string {
                 <div class="w-2 h-8 bg-indigo-500 rounded-full"></div>
                 <h5 class="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">Semester 1 (Ganjil)</h5>
               </div>
-              
+
               <div class="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
                   <thead class="bg-slate-50 dark:bg-slate-900/50">

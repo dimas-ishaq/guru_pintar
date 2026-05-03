@@ -11,13 +11,18 @@ import { settingsData } from './settings';
 import { studentsData } from './students';
 import { kelasData } from './kelas';
 import { subjectsData } from './subjects';
+import { usersData } from './users';
+import { soalPilihanGandaData } from './soal-pilihan-ganda';
+import { soalEssayData } from './soal-essay';
 
 /**
  * Returns the full inline <script> content for the Alpine.js app function.
+ * Escapes </script> to prevent premature script tag closing.
  */
 export function appScript(): string {
-  return `
-        function app() {
+  const defaultPromptAnalisisCP = 'Anda adalah Pakar Kurikulum Merdeka yang menganalisis CP menjadi ATP yang logis, terukur, relevan dengan jurusan, dan hanya mengembalikan JSON.';
+  const raw = `
+        window.app = function app() {
           return {
             currentView: 'dashboard',
             darkMode: false,
@@ -60,7 +65,8 @@ export function appScript(): string {
                   { id: 'ai-prosem', label: 'PROSEM', icon: 'calendar_today' },
                   { id: 'ai-kktp', label: 'KKTP', icon: 'check_circle' },
                   { id: 'ai-modul', label: 'Modul Ajar', icon: 'school' },
-                ]
+                                    { id: 'ai-lkpd', label: 'LKPD', icon: 'assignment' },
+                                  ]
               },
               { id: 'attendance', label: 'Kehadiran', icon: 'fact_check' },
               { id: 'profile', label: 'Profil', icon: 'person' },
@@ -76,6 +82,7 @@ export function appScript(): string {
                   { id: 'data-siswa', label: 'Data Siswa', icon: 'people' },
                 ]
               },
+              { id: 'account', label: 'Manajemen Akun', icon: 'people' },
               { id: 'settings', label: 'Pengaturan', icon: 'settings' },
             ],
 
@@ -106,94 +113,103 @@ export function appScript(): string {
             // ── Subjects Management ─────────────────────
                         ${subjectsData()}
 
-                        // ── Initialization ──────────────────────
-            async init() {
-              this.darkMode = localStorage.getItem('darkMode') === 'dark';
+                        // ── Users Management ────────────────────────
+                        ${usersData()}
+
+                        // ── Soal Pilihan Ganda ─────────────────────
+                        ${soalPilihanGandaData()}
+
+                        // ── Soal Essay ─────────────────────
+                        ${soalEssayData()}
+
+                        // ── Auth Helper ────────────────────────────
+                                    checkAuth() {
+                                      const token = localStorage.getItem('token');
+                                      if (!token) {
+                                        this.logout();
+                                        return false;
+                                      }
+                                      return true;
+                                    },
+
+                                    // Helper for authenticated fetch
+                                    async authFetch(url, options = {}) {
+                                      const token = localStorage.getItem('token');
+                                      if (!token) {
+                                        this.logout();
+                                        throw new Error('Unauthorized');
+                                      }
+                                      const response = await fetch(url, {
+                                        ...options,
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                          'Authorization': 'Bearer ' + token,
+                                          ...options.headers,
+                                        },
+                                      });
+                                      if (response.status === 401) {
+                                        alert('Sesi Anda telah berakhir. Silakan login kembali.');
+                                        this.logout();
+                                        throw new Error('Session expired');
+                                      }
+                                      return response;
+                                    },
+
+                                    // ── Initialization ──────────────────────
+                                    async init() {
+                                      // Check session first
+                                      if (!this.checkAuth()) return;
+
+                                      this.darkMode = localStorage.getItem('darkMode') === 'dark';
               if (this.darkMode) document.documentElement.classList.add('dark');
 
               this.settings.apiKey = localStorage.getItem('apiKey') || '';
               this.settings.baseUrl = localStorage.getItem('baseUrl') || '';
               this.settings.provider = localStorage.getItem('provider') || 'openai';
-              this.settings.selectedModel = localStorage.getItem('selectedModel') || (this.settings.provider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
-              this.settings.promptAnalisisCP = localStorage.getItem('promptAnalisisCP') || \`Anda adalah seorang Pakar Kurikulum Merdeka yang spesialis dalam pengembangan kurikulum SMK, khususnya rumpun Teknologi Informasi (seperti PPLG). Tugas Anda adalah menganalisis input dari guru untuk memastikan Capaian Pembelajaran (CP) diturunkan menjadi Alur Tujuan Pembelajaran (ATP) yang logis, terukur, dan sesuai standar BSKAP.
-
-### KONTEKS KHUSUS:
-- Di sekolah ini, "Elemen" sering kali diperlakukan sebagai "Mata Pelajaran" tersendiri.
-- Fokus utama: Keselarasan (Alignment), Scaffolding (Urutan Logis), dan Integrasi P5.
-
-### TUGAS ANDA:
-1. Analisis Kompetensi: Identifikasi Kata Kerja Operasional (KKO) dalam CP dan pastikan Tujuan Pembelajaran (TP) yang dihasilkan setara atau mendukung KKO tersebut.
-2. Analisis Konten: Bedah materi esensial dari teks CP yang diberikan.
-3. Cek Urutan (Scaffolding): Pastikan materi disusun dari dasar ke kompleks (misal: Logika dasar sebelum Sintaks PWA).
-4. Identifikasi Gap: Beritahu jika ada bagian dari CP yang belum ter-cover oleh elemen atau rencana guru.
-
-### INSTRUKSI KHUSUS CAKUPAN WAKTU:
-1. JIKA MODE = "TAHUNAN":
-   - Analisis seluruh teks CP untuk durasi 1 Tahun Ajaran (Fase E = 1 tahun, Fase F = 2 tahun).
-   - Bagi Tujuan Pembelajaran (TP) secara merata ke dalam dua blok: Semester 1 (Ganjil) dan Semester 2 (Genap).
-   - Pastikan materi di Semester 2 memiliki prasyarat yang logis dari Semester 1 (Scaffolding Jangka Panjang).
-
-2. JIKA MODE = "SEMESTER":
-   - Fokus hanya pada Tujuan Pembelajaran operasional untuk periode 6 bulan.
-   - Jika Semester 1: Mulai dari materi fundamental/dasar.
-   - Jika Semester 2: Asumsikan siswa sudah memiliki kompetensi dasar dari semester sebelumnya dan berikan materi pengembangan atau proyek akhir.
-
-### INPUT DATA:
-- Mode: {{mode}} (Tahunan / Semester)
-- Semester Pilihan: {{semester}} (Hanya relevan jika mode semester)
-- Mapel/Elemen: {{mapel}}
-- Elemen Detail: {{elemen}}
-- Teks CP: {{cp_text}}
-- Alokasi JP: {{jp}}
-- Waktu per JP: {{jp_duration}} (misal: 45 menit)
-
-### MANDATORY SCHEMA (JSON ONLY):
-{
-  "atp_table": [
-    {
-      "semester": "1",
-      "elemen": "{{elemen}}",
-      "taksonomi": "C3 - Menerapkan",
-      "materi": "Nama Topik/Bab (Contoh: 'Tipe Data & Variabel', 'SQL Join', 'Metode Agile')",
-      "tp": "Tujuan Pembelajaran lengkap",
-      "jp": "12",
-      "p5": "Gotong Royong",
-      "catatan_ai": "Analisis singkat"
-    }
-  ]
-}
-
-### ATURAN KERAS MATERI:
-1. "materi" HARUS berupa KATA BENDA / NAMA TOPIK (Contoh: "Array 2 Dimensi").
-2. DILARANG menggunakan kata kerja di awal materi (JANGAN GUNAKAN: "Menjelaskan...", "Memahami...", "Mempraktikkan...").
-3. BEDAH teks CP menjadi unit pengetahuan terkecil (Bab/Sub-bab).
-
-### REASONING RULES:
-1. "taksonomi" WAJIB berisi Level Bloom (C1-C6).
-2. "elemen" HARUS sesuai dengan input.
-3. JANGAN BERIKAN TEKS PENJELASAN. HANYA JSON.\`;
+               this.settings.selectedModel = localStorage.getItem('selectedModel') || (this.settings.provider === 'openai' ? 'gpt-4o-mini' : this.settings.provider === 'google' ? 'gemini-1.5-flash' : 'meta/llama-3.1-8b-instruct');
+              this.settings.promptAnalisisCP = localStorage.getItem('promptAnalisisCP') || ${JSON.stringify(defaultPromptAnalisisCP)};
 
               this.settings.promptATP = localStorage.getItem('promptATP') || 'Buatkan Alur Tujuan Pembelajaran (ATP) untuk CP berikut berdasarkan alokasi waktu dan urutan logis...';
 
               // Load student data first
-              await this.loadStudents();
-              // Load attendance data (depends on students)
-              await this.loadAttendanceData();
-              // Load Jurusan
-              await this.loadJurusan();
-              await this.loadDocuments();
-              await this.loadClasses();
+                            await this.loadStudents();
+                            // Load attendance data (depends on students)
+                            await this.loadAttendanceData();
+                            // Load Jurusan
+                            await this.loadJurusan();
+                            await this.loadDocuments();
+                            await this.loadClasses();
 
-              await this.loadSubjects();
+                            await this.loadSubjects();
 
-              this.initAnalisisCP();
-            },
+                            // Load users
+                                                        await this.loadUsers();
+
+                                                        // Load soal pilihan ganda from localStorage
+                                                        this.loadSoalPilihanGanda();
+
+                                                        // Load soal essay from localStorage
+                                                        this.loadSoalEssay();
+
+                                                        this.initAnalisisCP();
+                                        },
 
             logout() {
               localStorage.removeItem('token');
               window.location.href = '/login';
             }
           };
-        }
+        };
+
+        // Expose init to global scope for Alpine.js
+        document.addEventListener('alpine:init', () => {
+          Alpine.data('app', () => window.app());
+        });
+
+        window.init = function() {
+          return window.app().init.call(window.app());
+        };
   `;
+  // Escape </script> to prevent browser from closing the script tag prematurely
+  return raw.replace(/<\/script>/gi, '<\\/script>');
 }

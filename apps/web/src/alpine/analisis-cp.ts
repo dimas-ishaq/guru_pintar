@@ -5,18 +5,19 @@
 export function analisisCPData(): string {
   return `
               cpForm: {
-                mapel: '',
-                fase: '',
-                nama_sekolah: '',
-                nama_guru: '',
-                nama_kepsek: '',
-                tahun_ajaran: '2024/2025',
-                mode: 'Tahunan',
-                semester: '1',
-                kurikulum: 'Merdeka',
-                jp: '',
-                jp_duration: '45'
-              },
+                              mapel: '',
+                              fase: '',
+                              jurusan: '',
+                              nama_sekolah: '',
+                              nama_guru: '',
+                              nama_kepsek: '',
+                              tahun_ajaran: '2024/2025',
+                              mode: 'Tahunan',
+                              semester: '1',
+                              kurikulum: 'Merdeka',
+                              jp: '',
+                              jp_duration: '45'
+                            },
             elements: [{ name: '', cp: '', materi: '' }],
             isAnalyzing: false,
             isSaving: false,
@@ -45,18 +46,19 @@ export function analisisCPData(): string {
             resetForm() {
               if (confirm('Apakah Anda yakin ingin mengosongkan seluruh formulir?')) {
                 this.cpForm = {
-                  mapel: '',
-                  fase: '',
-                  nama_sekolah: '',
-                  nama_guru: '',
-                  nama_kepsek: '',
-                  tahun_ajaran: '2024/2025',
-                  mode: 'Tahunan',
-                  semester: '1',
-                  kurikulum: 'Merdeka',
-                  jp: '',
-                  jp_duration: '45'
-                };
+                                  mapel: '',
+                                  fase: '',
+                                  jurusan: '',
+                                  nama_sekolah: '',
+                                  nama_guru: '',
+                                  nama_kepsek: '',
+                                  tahun_ajaran: '2024/2025',
+                                  mode: 'Tahunan',
+                                  semester: '1',
+                                  kurikulum: 'Merdeka',
+                                  jp: '',
+                                  jp_duration: '45'
+                                };
                 this.elements = [{ name: '', cp: '', materi: '' }];
                 this.analisisResult = null;
                 localStorage.removeItem('cpForm');
@@ -82,10 +84,10 @@ export function analisisCPData(): string {
                   this.isAnalyzing = false;
                   return;
                 }
-                
+
                 let elemenNames = [];
                 let cpDetails = [];
-                
+
                 if (this.elements && this.elements.length) {
                   this.elements.forEach((item, idx) => {
                     if (item.name && item.name.trim()) {
@@ -99,14 +101,15 @@ export function analisisCPData(): string {
                 const cpTextCombined = cpDetails.join('\\n\\n') || '-';
 
                 let prompt = this.settings.promptAnalisisCP || '';
-                prompt = prompt.replace('{{mapel}}', this.cpForm.mapel || '-');
-                prompt = prompt.replace('{{fase}}', this.cpForm.fase || '-');
-                prompt = prompt.replace('{{elemen}}', elemenText);
-                prompt = prompt.replace('{{cp_text}}', cpTextCombined);
-                prompt = prompt.replace('{{mode}}', this.cpForm.mode || 'Tahunan');
-                prompt = prompt.replace('{{semester}}', this.cpForm.semester || '-');
-                prompt = prompt.replace('{{jp}}', (this.cpForm.jp || '-') + ' JP');
-                prompt = prompt.replace('{{jp_duration}}', (this.cpForm.jp_duration || '45') + ' menit');
+                                prompt = prompt.replace('{{mapel}}', this.cpForm.mapel || '-');
+                                prompt = prompt.replace('{{fase}}', this.cpForm.fase || '-');
+                                prompt = prompt.replace('{{jurusan}}', this.cpForm.jurusan || '-');
+                                prompt = prompt.replace('{{elemen}}', elemenText);
+                                prompt = prompt.replace('{{cp_text}}', cpTextCombined);
+                                prompt = prompt.replace('{{mode}}', this.cpForm.mode || 'Tahunan');
+                                prompt = prompt.replace('{{semester}}', this.cpForm.semester || '-');
+                                prompt = prompt.replace('{{jp}}', (this.cpForm.jp || '-') + ' JP');
+                                prompt = prompt.replace('{{jp_duration}}', (this.cpForm.jp_duration || '45') + ' menit');
 
                 let response;
                 if (this.settings.provider === 'google') {
@@ -159,9 +162,9 @@ export function analisisCPData(): string {
                 } else {
                   content = data.choices[0].message.content;
                 }
-                
+
                 console.log('AI Response Content:', content);
-                
+
                 // Robust JSON extraction
                 try {
                   const firstBrace = content.indexOf('{');
@@ -194,7 +197,7 @@ export function analisisCPData(): string {
                         // Coba ekstrak materi jika ada pemisah ":"
                         let extractedMateri = 'Materi Belum Terdeteksi';
                         let tpText = item;
-                        
+
                         if (item.includes(':')) {
                           const parts = item.split(':');
                           if (parts.length > 1 && parts[0].length < 40) {
@@ -238,7 +241,7 @@ export function analisisCPData(): string {
                   console.error('JSON Parse Error:', e);
                   throw new Error('Format respon AI tidak valid atau tidak lengkap.');
                 }
-                
+
               } catch (error) {
                 console.error('Error generating ATP:', error);
                 alert('Gagal menghasilkan analisis: ' + (error instanceof Error ? error.message : 'Unknown error'));
@@ -280,7 +283,7 @@ export function analisisCPData(): string {
                 });
 
                 if (!response.ok) throw new Error('Gagal menyimpan ke database');
-                
+
                 alert('Analisis berhasil disimpan ke database!');
               } catch (error) {
                 console.error('Save error:', error);
@@ -291,37 +294,114 @@ export function analisisCPData(): string {
             },
 
             exportToPDF() {
-              const element = document.getElementById('export-container');
-              if (!element) return;
-              
-              const opt = {
-                margin: 10,
-                filename: 'Analisis_CP_ATP_' + (this.cpForm.mapel || 'Dokumen') + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-              };
-              
-              // @ts-ignore
-              html2pdf().set(opt).from(element).save();
-            },
+                                      var element = document.getElementById('export-container');
+                                      if (!element) return;
+
+                                      // Inject inline styles for clean table rendering in PDF
+                                      var styleEl = document.createElement('style');
+                                      styleEl.innerHTML = 'table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #333; padding: 6px; font-size: 9pt; } th { background: #e8e8e8; font-weight: bold; }';
+                                      element.appendChild(styleEl);
+
+                                      var opt = {
+                                        margin: 8,
+                                        filename: 'Analisis_CP_ATP_' + (this.cpForm && this.cpForm.mapel ? this.cpForm.mapel : 'Dokumen') + '.pdf',
+                                        image: { type: 'jpeg', quality: 0.95 },
+                                        html2canvas: { scale: 2, useCORS: true },
+                                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                                      };
+
+                                      // @ts-ignore
+                                      html2pdf().set(opt).from(element).save().finally(function() {
+                                        element.removeChild(styleEl);
+                                      });
+                                    },
 
             exportToWord() {
-              const element = document.getElementById('export-container');
-              if (!element) return;
+                                      const rows = this.analisisResult && this.analisisResult.atp_table ? this.analisisResult.atp_table : [];
+                                      if (!rows || rows.length === 0) {
+                                        alert('Tidak ada data ATP untuk diekspor.');
+                                        return;
+                                      }
 
-              const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word</title></head><body>";
-              const footer = "</body></html>";
-              const sourceHTML = header + element.innerHTML + footer;
-              
-              const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-              const fileDownload = document.createElement("a");
-              document.body.appendChild(fileDownload);
-              fileDownload.href = source;
-              fileDownload.download = 'Analisis_CP_ATP_' + (this.cpForm.mapel || 'Dokumen') + '.doc';
-              fileDownload.click();
-              document.body.removeChild(fileDownload);
-            },
+                                      // Escape XML special characters
+                                      var esc = function(s) {
+                                        return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+                                      };
+
+                                      // Build Word document XML
+                                      var tahunAjaran = this.cpForm && this.cpForm.tahun_ajaran ? this.cpForm.tahun_ajaran : '-';
+                                      var namaSekolah = this.cpForm && this.cpForm.nama_sekolah ? this.cpForm.nama_sekolah : '-';
+                                      var namaGuru = this.cpForm && this.cpForm.nama_guru ? this.cpForm.nama_guru : '-';
+                                      var mapel = this.cpForm && this.cpForm.mapel ? this.cpForm.mapel : '-';
+                                      var jurusan = this.cpForm && this.cpForm.jurusan ? this.cpForm.jurusan : '-';
+
+                                      var docHeader = [
+                                        '<?xml version="1.0" encoding="UTF-8"?>',
+                                        '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">',
+                                        '  <w:body>',
+                                        '    <w:p><w:r><w:t>ANALISIS CP &amp; ATP</w:t></w:r></w:p>',
+                                        '    <w:p><w:r><w:t>Tahun Ajaran: ' + esc(tahunAjaran) + '</w:t></w:r></w:p>',
+                                        '    <w:p><w:r><w:t>Sekolah: ' + esc(namaSekolah) + ' | Guru: ' + esc(namaGuru) + ' | Mapel: ' + esc(mapel) + '</w:t></w:r></w:p>',
+                                        '    <w:p><w:r><w:t>Jurusan: ' + esc(jurusan) + '</w:t></w:r></w:p>',
+                                        '    <w:p/>'
+                                      ].join('\\\\n');
+
+                                      var tblHeader = [
+                                        '    <w:tbl>',
+                                        '      <w:tblPr>',
+                                        '        <w:tblW w:w="0" w:type="auto"/>',
+                                        '        <w:tblBorders>',
+                                        '          <w:top w:val="single" w:sz="4" w:color="auto"/>',
+                                        '          <w:left w:val="single" w:sz="4" w:color="auto"/>',
+                                        '          <w:bottom w:val="single" w:sz="4" w:color="auto"/>',
+                                        '          <w:right w:val="single" w:sz="4" w:color="auto"/>',
+                                        '          <w:insideH w:val="single" w:sz="4" w:color="auto"/>',
+                                        '          <w:insideV w:val="single" w:sz="4" w:color="auto"/>',
+                                        '        </w:tblBorders>',
+                                        '      </w:tblPr>',
+                                        '      <w:tr>',
+                                        '        <w:tc><w:p><w:r><w:t>Elemen</w:t></w:r></w:p></w:tc>',
+                                        '        <w:tc><w:p><w:r><w:t>Taksonomi</w:t></w:r></w:p></w:tc>',
+                                        '        <w:tc><w:p><w:r><w:t>Tujuan Pembelajaran (TP)</w:t></w:r></w:p></w:tc>',
+                                        '        <w:tc><w:p><w:r><w:t>Materi</w:t></w:r></w:p></w:tc>',
+                                        '        <w:tc><w:p><w:r><w:t>JP</w:t></w:r></w:p></w:tc>',
+                                        '        <w:tc><w:p><w:r><w:t>P5 / Catatan AI</w:t></w:r></w:p></w:tc>',
+                                        '      </w:tr>'
+                                      ].join('\\\\n');
+
+                                      var tblRows = '';
+                                      for (var i = 0; i < rows.length; i++) {
+                                        var item = rows[i];
+                                        var p5cat = item.p5 ? item.p5 + ' / ' + (item.catatan_ai || '') : (item.catatan_ai || '');
+                                        tblRows += [
+                                          '      <w:tr>',
+                                          '        <w:tc><w:p><w:r><w:t>' + esc(item.elemen) + '</w:t></w:r></w:p></w:tc>',
+                                          '        <w:tc><w:p><w:r><w:t>' + esc(item.taksonomi) + '</w:t></w:r></w:p></w:tc>',
+                                          '        <w:tc><w:p><w:r><w:t>' + esc(item.tp) + '</w:t></w:r></w:p></w:tc>',
+                                          '        <w:tc><w:p><w:r><w:t>' + esc(item.materi) + '</w:t></w:r></w:p></w:tc>',
+                                          '        <w:tc><w:p><w:r><w:t>' + esc(item.jp) + '</w:t></w:r></w:p></w:tc>',
+                                          '        <w:tc><w:p><w:r><w:t>' + esc(p5cat) + '</w:t></w:r></w:p></w:tc>',
+                                          '      </w:tr>'
+                                        ].join('\\\\n') + '\\\\n';
+                                      }
+
+                                      var docFooter = [
+                                        '    </w:tbl>',
+                                        '    <w:p/>',
+                                        '    <w:sectPr><w:pgSz w:w="12240" w:h="15840"/></w:sectPr>',
+                                        '  </w:body>',
+                                        '</w:document>'
+                                      ].join('\\\\n');
+
+                                      var xmlContent = docHeader + tblHeader + tblRows + docFooter;
+                                      var blob = new Blob([xmlContent], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+                                      var url = URL.createObjectURL(blob);
+                                      var a = document.createElement('a');
+                                      a.href = url;
+                                      a.download = 'Analisis_CP_ATP_' + (this.cpForm && this.cpForm.mapel ? this.cpForm.mapel : 'Dokumen') + '.docx';
+                                      a.click();
+                                      URL.revokeObjectURL(url);
+                                    },
 
   `;
 }

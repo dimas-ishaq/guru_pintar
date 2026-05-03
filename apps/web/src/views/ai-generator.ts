@@ -85,6 +85,32 @@ export function aiGeneratorView(): string {
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Topik Pembelajaran</label>
                   <input type="text" x-model="formData.topic" placeholder="Contoh: Hukum Newton" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
                 </div>
+                <!-- LKPD fields -->
+                <template x-if="currentView === 'ai-lkpd'">
+                  <div class="space-y-lg">
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Topik / Judul LKPD</label>
+                      <input type="text" x-model="formData.topic" placeholder="Contoh: LKPD Hukum Newton" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Capaian Pembelajaran (CP) / ATP</label>
+                      <textarea x-model="formData.cp" placeholder="Masukkan CP dan/atau ATP yang ingin dicapai" class="form-textarea w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white h-28"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                      <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kelompok / Individu</label>
+                        <select x-model="formData.activityType" class="form-select w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
+                          <option value="individu">Individu</option>
+                          <option value="kelompok">Kelompok</option>
+                        </select>
+                      </div>
+                      <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Jumlah Pertemuan</label>
+                        <input type="number" x-model="formData.meetings" placeholder="1" min="1" max="10" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
+                      </div>
+                    </div>
+                  </div>
+                </template>
                 <button type="submit" :disabled="isGenerating" class="w-full bg-primary text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-primary-container transition-all disabled:opacity-50">
                   <span class="material-symbols-outlined" x-text="isGenerating ? 'progress_activity' : 'auto_awesome'"></span>
                   <span x-text="isGenerating ? 'Membangun Konten...' : 'Generate Sekarang'"></span>

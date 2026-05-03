@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { documents as documentsTable } from '@guru-pintar/types/schema';
-import { generateProta, generateProsem, generateModulAjar, generateKKTP } from '@guru-pintar/ai';
+import { generateProta, generateProsem, generateModulAjar, generateKKTP, generateLKPD } from '@guru-pintar/ai';
 import { AIGeneratorOutput } from '@guru-pintar/types';
 import { eq, desc } from 'drizzle-orm';
 import { z, ZodError } from 'zod';
@@ -9,6 +9,7 @@ import {
   ProsemInputSchema,
   ModulAjarInputSchema,
   KKTPInputSchema,
+  LKPDInputSchema,
   SaveAnalisisCPInputSchema,
 } from '@guru-pintar/types';
 import type {
@@ -16,6 +17,7 @@ import type {
   ProsemInput,
   ModulAjarInput,
   KKTPInput,
+  LKPDInput,
   SaveAnalisisCPInput,
 } from '@guru-pintar/types';
 
@@ -134,6 +136,33 @@ export async function createKKTPDocument(input: KKTPInput): Promise<AIGeneratorO
       throw new DocumentServiceError('Invalid input: ' + error.message, 400);
     }
     throw new DocumentServiceError('Failed to generate KKTP: ' + error.message, 500);
+  }
+}
+
+/**
+ * Create an LKPD document via AI and persist it.
+ */
+export async function createLKPDDocument(input: LKPDInput): Promise<AIGeneratorOutput> {
+  try {
+    const validatedInput = LKPDInputSchema.parse(input);
+    const { userId, apiKey, baseUrl, ...aiInput } = validatedInput;
+
+    const result = await generateLKPD(aiInput, { apiKey, baseUrl });
+
+    await db.insert(documentsTable).values({
+      userId,
+      type: 'lkpd',
+      title: result.title,
+      content: result.content,
+      metadata: result.metadata,
+    });
+
+    return result;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new DocumentServiceError('Invalid input: ' + error.message, 400);
+    }
+    throw new DocumentServiceError('Failed to generate LKPD: ' + error.message, 500);
   }
 }
 

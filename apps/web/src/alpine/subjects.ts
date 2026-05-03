@@ -19,21 +19,23 @@ export function subjectsData(): string {
             subjectsDeleteInput: '',
 
             async loadSubjects() {
-              this.isSubjectsLoading = true;
-              try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/subjects', {
-                  headers: { 'Authorization': 'Bearer ' + token }
-                });
-                if (response.ok) {
-                  this.subjects = await response.json();
-                }
-              } catch (error) {
-                console.error('Load subjects error:', error);
-              } finally {
-                this.isSubjectsLoading = false;
-              }
-            },
+                          this.isSubjectsLoading = true;
+                          try {
+                            const token = localStorage.getItem('token');
+                            if (!token) { this.logout(); return; }
+                            const response = await fetch('/api/subjects', {
+                              headers: { 'Authorization': 'Bearer ' + token }
+                            });
+                            if (response.status === 401) { alert('Sesi berakhir.'); this.logout(); return; }
+                            if (response.ok) {
+                              this.subjects = await response.json();
+                            }
+                          } catch (error) {
+                            console.error('Load subjects error:', error);
+                          } finally {
+                            this.isSubjectsLoading = false;
+                          }
+                        },
 
             openAddSubjectsModal() {
               this.subjectsForm = {

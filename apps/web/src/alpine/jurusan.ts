@@ -18,21 +18,23 @@ export function jurusanData(): string {
             jurusanDeleteInput: '',
 
             async loadJurusan() {
-              this.isJurusanLoading = true;
-              try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/majors', {
-                  headers: { 'Authorization': 'Bearer ' + token }
-                });
-                if (response.ok) {
-                  this.jurusan = await response.json();
-                }
-              } catch (error) {
-                console.error('Load jurusan error:', error);
-              } finally {
-                this.isJurusanLoading = false;
-              }
-            },
+                          this.isJurusanLoading = true;
+                          try {
+                            const token = localStorage.getItem('token');
+                            if (!token) { this.logout(); return; }
+                            const response = await fetch('/api/majors', {
+                              headers: { 'Authorization': 'Bearer ' + token }
+                            });
+                            if (response.status === 401) { alert('Sesi berakhir.'); this.logout(); return; }
+                            if (response.ok) {
+                              this.jurusan = await response.json();
+                            }
+                          } catch (error) {
+                            console.error('Load jurusan error:', error);
+                          } finally {
+                            this.isJurusanLoading = false;
+                          }
+                        },
 
             openAddJurusanModal() {
               this.jurusanForm = { id: null, name: '', code: '', description: '' };

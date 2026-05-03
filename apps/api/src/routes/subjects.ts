@@ -10,6 +10,33 @@ const router = new Hono();
 router.get('/', async (c) => {
   const user = c.get('user');
 
+  // Admin sees all subjects, regular user sees only their own
+  if (user.role === 'admin') {
+    const result = await db.select({
+      id: subjectsTable.id,
+      name: subjectsTable.name,
+      code: subjectsTable.code,
+      majorId: subjectsTable.majorId,
+      classId: subjectsTable.classId,
+      userId: subjectsTable.userId,
+      createdAt: subjectsTable.createdAt,
+      updatedAt: subjectsTable.updatedAt,
+      major: {
+        id: majorsTable.id,
+        name: majorsTable.name,
+        code: majorsTable.code,
+      },
+      class: {
+        id: classesTable.id,
+        name: classesTable.name,
+      }
+    })
+      .from(subjectsTable)
+      .leftJoin(majorsTable, eq(subjectsTable.majorId, majorsTable.id))
+      .leftJoin(classesTable, eq(subjectsTable.classId, classesTable.id));
+    return c.json(result);
+  }
+
   const result = await db.select({
     id: subjectsTable.id,
     name: subjectsTable.name,

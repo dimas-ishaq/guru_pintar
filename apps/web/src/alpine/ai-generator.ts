@@ -23,6 +23,8 @@ export function aiGeneratorData(): string {
               difficulty: 'menengah',
               semester1: true,
               semester2: true,
+              activityType: 'individu',
+              meetings: '1',
             },
 
             async submitForm() {
@@ -30,19 +32,21 @@ export function aiGeneratorData(): string {
               this.lastGenerated = null;
 
               const typeMap = {
-                'ai-prota': 'prota',
-                'ai-prosem': 'prosem',
-                'ai-modul': 'modul',
-                'ai-kktp': 'kktp'
-              };
+                              'ai-prota': 'prota',
+                              'ai-prosem': 'prosem',
+                              'ai-modul': 'modul',
+                              'ai-kktp': 'kktp',
+                              'ai-lkpd': 'lkpd'
+                            };
               const type = typeMap[this.currentView];
 
               const endpoints = {
-                prota: '/api/documents/generate-prota',
-                prosem: '/api/documents/generate-prosem',
-                modul: '/api/documents/generate-modul-ajar',
-                kktp: '/api/documents/generate-kktp',
-              };
+                              prota: '/api/documents/generate-prota',
+                              prosem: '/api/documents/generate-prosem',
+                              modul: '/api/documents/generate-modul-ajar',
+                              kktp: '/api/documents/generate-kktp',
+                              lkpd: '/api/documents/generate-lkpd',
+                            };
               try {
                 const response = await fetch(endpoints[type], {
                   method: 'POST',

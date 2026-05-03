@@ -7,16 +7,16 @@ export function dashboardData(): string {
             documents: [],
 
             async loadDocuments() {
-              try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/documents/list/1', {
-                  headers: {
-                    'Authorization': 'Bearer ' + token
-                  }
-                });
-                const data = await response.json();
-                this.documents = data.documents || [];
-              } catch (e) { console.error(e); }
-            },
+                          try {
+                            const token = localStorage.getItem('token');
+                            if (!token) { this.logout(); return; }
+                            const response = await fetch('/api/documents/list/1', {
+                              headers: { 'Authorization': 'Bearer ' + token }
+                            });
+                            if (response.status === 401) { alert('Sesi berakhir.'); this.logout(); return; }
+                            const data = await response.json();
+                            this.documents = data.documents || [];
+                          } catch (e) { console.error(e); }
+                        },
   `;
 }

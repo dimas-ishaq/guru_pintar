@@ -42,7 +42,7 @@ export const ClassSchema = z.object({
 export const DocumentSchema = z.object({
   id: z.number(),
   userId: z.number(),
-  type: z.enum(['prota', 'prosem', 'modul_ajar', 'kktp', 'analisis_cp']),
+  type: z.enum(['prota', 'prosem', 'modul_ajar', 'kktp', 'analisis_cp', 'lkpd', 'soal_essay']),
   title: z.string(),
   content: z.string(),
   metadata: z.record(z.any()).nullable(),
@@ -50,8 +50,20 @@ export const DocumentSchema = z.object({
   updatedAt: z.date(),
 });
 
+export const SubjectsSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  majorId: z.number().nullable(),
+  classId: z.number().nullable(),
+  name: z.string(),
+  code: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
 export const AIGeneratorOutputSchema = z.object({
   title: z.string(),
+  description: z.string(),
   content: z.string(),
   metadata: z.record(z.any()).optional(),
 });

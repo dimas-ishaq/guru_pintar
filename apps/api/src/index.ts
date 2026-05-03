@@ -4,11 +4,14 @@ import { logger } from 'hono/logger';
 
 // Routes
 import authRoutes from './routes/auth';
+import usersRoutes from './routes/users';  // NEW
 import attendanceRoutes from './routes/attendance';
 import documentRoutes from './routes/documents';
 import classesRoutes from './routes/classes';
 import majorsRoutes from './routes/majors';
 import subjectRoutes from './routes/subjects';
+import soalPilihanGandaRoutes from './routes/soal-pilihan-ganda';
+import soalEssayRoutes from './routes/soal-essay';
 
 // Middlewares
 import { authMiddleware } from './middlewares/auth';
@@ -35,6 +38,9 @@ app.route('/api/auth', authRoutes);
 app.use('/api/attendance/*', authMiddleware);
 app.route('/api/attendance', attendanceRoutes);
 
+app.use('/api/users/*', authMiddleware);
+app.route('/api/users', usersRoutes);
+
 app.use('/api/documents/*', authMiddleware);
 app.route('/api/documents', documentRoutes);
 
@@ -46,5 +52,11 @@ app.route('/api/majors', majorsRoutes);
 
 app.use('/api/subjects/*', authMiddleware);
 app.route('/api/subjects', subjectRoutes);
+
+app.use('/api/soal-pilihan-ganda/*', authMiddleware);
+app.route('/api/soal-pilihan-ganda', soalPilihanGandaRoutes);
+
+app.use('/api/soal-essay/*', authMiddleware);
+app.route('/api/soal-essay', soalEssayRoutes);
 
 export default app;

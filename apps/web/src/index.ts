@@ -13,6 +13,9 @@ import { settingsView } from './views/settings';
 import { studentsView } from './views/students';
 import { kelasView } from './views/kelas';
 import { subjectsView } from './views/subjects';
+import { usersView } from './views/users';
+import { soalPilihanGandaView } from './views/soal-pilihan-ganda';
+import { soalEssayView } from './views/soal-essay';
 
 const app = new Hono();
 
@@ -27,7 +30,7 @@ app.all('/api/*', async (c) => {
     body: c.req.method !== 'GET' && c.req.method !== 'HEAD' ? await c.req.blob() : undefined,
   });
 
-  return c.body(response.body, {
+  return c.body(await response.arrayBuffer(), {
     status: response.status,
     headers: response.headers,
   });
@@ -36,16 +39,19 @@ app.all('/api/*', async (c) => {
 // Compose all views into a single page
 app.get('/', (c) => {
   const content = [
-    dashboardView(),
-    aiGeneratorView(),
-    analisisCPView(),
-    attendanceView(),
-    jurusanView(),
-    settingsView(),
-    studentsView(),
-    kelasView(),
-        subjectsView(),
-  ].join('\n');
+      dashboardView(),
+      aiGeneratorView(),
+      analisisCPView(),
+      attendanceView(),
+      jurusanView(),
+      settingsView(),
+      studentsView(),
+      kelasView(),
+      subjectsView(),
+      usersView(),
+            soalPilihanGandaView(),
+            soalEssayView(),
+          ].join('\n');
 
   return c.html(renderPage(content));
 });

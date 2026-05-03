@@ -9,13 +9,14 @@ const router = new Hono();
 // GET /api/classes
 router.get('/', async (c) => {
   const user = c.get('user');
-  
+
   // Join classes with majors to get major info
-  const result = await db.select({
+  // Admin sees all classes, regular user sees only their own
+  const baseQuery = db.select({
     id: classesTable.id,
     name: classesTable.name,
-    grade: classesTable.grade,
     majorId: classesTable.majorId,
+    userId: classesTable.userId,
     createdAt: classesTable.createdAt,
     major: {
       id: majorsTable.id,
@@ -24,10 +25,12 @@ router.get('/', async (c) => {
     }
   })
   .from(classesTable)
-  .leftJoin(majorsTable, eq(classesTable.majorId, majorsTable.id))
-  .where(eq(classesTable.userId, user.id));
-  
-  return c.json(result);
+  .leftJoin(majorsTable, eq(classesTable.majorId, majorsTable.id));
+
+  if (user.role === 'admin') {
+    return c.json(await baseQuery);
+  }
+  return c.json(await baseQuery.where(eq(classesTable.userId, user.id)));
 });
 
 // POST /api/classes
@@ -40,7 +43,6 @@ router.post('/', async (c) => {
     userId: user.id,
     majorId: validated.majorId,
     name: validated.name,
-    grade: validated.grade,
   }).returning();
 
   return c.json(newClass, 201);
@@ -54,10 +56,9 @@ router.put('/:id', async (c) => {
   const validated = CreateClassInputSchema.parse(body);
 
   const [updatedClass] = await db.update(classesTable)
-    .set({ 
+    .set({
       majorId: validated.majorId,
-      name: validated.name, 
-      grade: validated.grade,
+      name: validated.name,
       updatedAt: new Date()
     })
     .where(and(eq(classesTable.id, id), eq(classesTable.userId, user.id)))

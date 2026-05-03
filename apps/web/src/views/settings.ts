@@ -18,32 +18,40 @@ export function settingsView(): string {
                   <h4 class="font-bold dark:text-white">AI Provider</h4>
                 </div>
                 <div class="space-y-4">
-                  <div class="grid grid-cols-2 gap-2 p-1 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <button @click="settings.provider = 'openai'" :class="settings.provider === 'openai' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'" class="py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" class="w-4 h-4 dark:invert" x-show="settings.provider === 'openai'">
-                      OpenAI / Custom
-                    </button>
-                    <button @click="settings.provider = 'google'" :class="settings.provider === 'google' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500'" class="py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2">
-                      <img src="https://www.gstatic.com/lamda/images/favicon_v2_16x16.png" class="w-4 h-4" x-show="settings.provider === 'google'">
-                      Google Gemini
-                    </button>
-                  </div>
+                 <div class="grid grid-cols-3 gap-2 p-1 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                     <button @click="settings.provider = 'openai'" :class="settings.provider === 'openai' ? 'bg-white dark:bg-slate-700 shadow-sm text-primary' : 'text-slate-500'" class="py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1">
+                       <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg" class="w-3 h-3 dark:invert" x-show="settings.provider === 'openai'">
+                       OpenAI
+                     </button>
+                     <button @click="settings.provider = 'google'" :class="settings.provider === 'google' ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600' : 'text-slate-500'" class="py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1">
+                       <img src="https://www.gstatic.com/lamda/images/favicon_v2_16x16.png" class="w-3 h-3" x-show="settings.provider === 'google'">
+                       Gemini
+                     </button>
+                     <button @click="settings.provider = 'nvidia'" :class="settings.provider === 'nvidia' ? 'bg-white dark:bg-slate-700 shadow-sm text-green-600' : 'text-slate-500'" class="py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1">
+                       <img src="https://developer.nvidia.com/sites/default/files/akamai/nvidia-logo.png" class="w-3 h-3 object-contain" x-show="settings.provider === 'nvidia'">
+                       Nvidia
+                     </button>
+                   </div>
                 </div>
 
                 <div class="space-y-lg">
                   <div class="space-y-2">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" x-text="settings.provider === 'openai' ? 'OpenAI API Key' : 'Google AI API Key'"></label>
+                     <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider" x-text="settings.provider === 'openai' ? 'OpenAI API Key' : settings.provider === 'google' ? 'Google AI API Key' : 'Nvidia API Key'"></label>
                     <div class="relative">
-                      <input :type="showApiKey ? 'text' : 'password'" x-model="settings.apiKey" :placeholder="settings.provider === 'openai' ? 'sk-...' : 'AIza...'" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 pr-12 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
+                      <input :type="showApiKey ? 'text' : 'password'" x-model="settings.apiKey" :placeholder="settings.provider === 'openai' ? 'sk-...' : settings.provider === 'google' ? 'AIza...' : 'nvapi-...'" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 pr-12 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
                       <button @click="showApiKey = !showApiKey" type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
                         <span class="material-symbols-outlined text-xl" x-text="showApiKey ? 'visibility_off' : 'visibility'"></span>
                       </button>
                     </div>
                   </div>
-                  <div class="space-y-2" x-show="settings.provider === 'openai'">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Custom Base URL (Opsional)</label>
-                    <input type="text" x-model="settings.baseUrl" placeholder="https://api.openai.com/v1" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
-                  </div>
+                   <div class="space-y-2" x-show="settings.provider === 'openai'">
+                     <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Custom Base URL (Opsional)</label>
+                     <input type="text" x-model="settings.baseUrl" placeholder="https://api.openai.com/v1" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
+                   </div>
+                   <div class="space-y-2" x-show="settings.provider === 'nvidia'">
+                     <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Base URL (Otomatis)</label>
+                     <input type="text" value="https://integrate.api.nvidia.com/v1" disabled class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-700 rounded-lg p-3 text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                   </div>
                   <div class="space-y-2">
                     <div class="flex items-center justify-between">
                       <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Model AI</label>

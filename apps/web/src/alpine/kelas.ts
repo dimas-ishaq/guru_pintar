@@ -16,21 +16,23 @@ export function kelasData(): string {
             kelasDeleteInput: '',
 
             async loadClasses() {
-              this.isKelasLoading = true;
-              try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('/api/classes', {
-                  headers: { 'Authorization': 'Bearer ' + token }
-                });
-                if (response.ok) {
-                  this.classes = await response.json();
-                }
-              } catch (error) {
-                console.error('Load classes error:', error);
-              } finally {
-                this.isKelasLoading = false;
-              }
-            },
+                          this.isKelasLoading = true;
+                          try {
+                            const token = localStorage.getItem('token');
+                            if (!token) { this.logout(); return; }
+                            const response = await fetch('/api/classes', {
+                              headers: { 'Authorization': 'Bearer ' + token }
+                            });
+                            if (response.status === 401) { alert('Sesi berakhir.'); this.logout(); return; }
+                            if (response.ok) {
+                              this.classes = await response.json();
+                            }
+                          } catch (error) {
+                            console.error('Load classes error:', error);
+                          } finally {
+                            this.isKelasLoading = false;
+                          }
+                        },
 
             openAddKelasModal() {
               this.kelasForm = { id: null, name: '', majorId: this.jurusan.length > 0 ? this.jurusan[0].id : null };

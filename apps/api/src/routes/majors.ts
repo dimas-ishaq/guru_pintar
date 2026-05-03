@@ -9,7 +9,12 @@ const router = new Hono();
 // GET /api/majors
 router.get('/', async (c) => {
   const user = c.get('user');
-  const result = await db.select().from(majorsTable).where(eq(majorsTable.userId, user.id));
+
+  // Admin sees all majors, regular user sees only their own
+  const condition = user.role === 'admin' ? undefined : eq(majorsTable.userId, user.id);
+  const result = condition
+    ? await db.select().from(majorsTable).where(condition)
+    : await db.select().from(majorsTable);
   return c.json(result);
 });
 
@@ -37,8 +42,8 @@ router.put('/:id', async (c) => {
   const validated = CreateMajorInputSchema.parse(body);
 
   const [updatedMajor] = await db.update(majorsTable)
-    .set({ 
-      name: validated.name, 
+    .set({
+      name: validated.name,
       code: validated.code,
       description: validated.description,
       updatedAt: new Date()
