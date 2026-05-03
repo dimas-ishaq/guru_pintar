@@ -1,12 +1,12 @@
 export function kelasView(): string {
   return `
-  <div x-show="currentView === 'kelas'" x-cloak class="space-y-6">
+  <div x-show="currentView === 'kelas'" x-cloak class="p-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
         <h2 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight uppercase">Manajemen Kelas</h2>
         <p class="text-slate-500 dark:text-slate-400 mt-1">Kelola data kelas dan hubungkan dengan jurusan</p>
       </div>
-      <button 
+      <button
         @click="openAddKelasModal()"
         class="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all duration-300 shadow-lg shadow-indigo-200 dark:shadow-none hover:scale-[1.02] active:scale-[0.98] font-bold"
       >
@@ -24,7 +24,6 @@ export function kelasView(): string {
           <thead class="bg-slate-50 dark:bg-slate-900/50">
             <tr>
               <th class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Nama Kelas</th>
-              <th class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Tingkat</th>
               <th class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Jurusan</th>
               <th class="px-6 py-4 text-right text-[10px] font-black text-slate-500 uppercase tracking-widest">Aksi</th>
             </tr>
@@ -39,9 +38,6 @@ export function kelasView(): string {
                     </div>
                     <span class="font-bold text-slate-700 dark:text-slate-200" x-text="item.name"></span>
                   </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg text-xs font-bold uppercase tracking-tight" x-text="'Tingkat ' + item.grade"></span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center gap-2">
@@ -67,7 +63,7 @@ export function kelasView(): string {
             </template>
             <template x-if="classes.length === 0 && !isKelasLoading">
               <tr>
-                <td colspan="4" class="px-6 py-12 text-center">
+                <td colspan="3" class="px-6 py-12 text-center">
                   <div class="flex flex-col items-center">
                     <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4">
                       <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +83,7 @@ export function kelasView(): string {
 
     <!-- Modal Form -->
     <div x-show="isKelasModalOpen" x-cloak
-         class="fixed inset-0 z-50 overflow-y-auto" 
+         class="fixed inset-0 z-50 overflow-y-auto"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -101,33 +97,22 @@ export function kelasView(): string {
           <div class="px-8 py-6">
             <h3 class="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight" x-text="kelasForm.id ? 'Edit Kelas' : 'Tambah Kelas Baru'"></h3>
             <p class="text-slate-500 dark:text-slate-400 mt-1 text-sm">Isi informasi kelas dengan lengkap dan benar.</p>
-            
+
             <div class="mt-8 space-y-5">
               <div>
                 <label class="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Nama Kelas</label>
                 <input type="text" x-model="kelasForm.name" placeholder="Contoh: XII RPL 1" class="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-white">
               </div>
-              
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Tingkat / Grade</label>
-                  <select x-model="kelasForm.grade" class="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-white">
-                    <option value="10">10 (X)</option>
-                    <option value="11">11 (XI)</option>
-                    <option value="12">12 (XII)</option>
-                    <option value="13">13 (XIII)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Jurusan</label>
-                  <select x-model="kelasForm.majorId" class="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-white">
-                    <option value="">Pilih Jurusan</option>
-                    <template x-for="j in jurusan" :key="j.id">
-                      <option :value="j.id" x-text="j.code + ' - ' + j.name"></option>
-                    </template>
-                  </select>
-                  <p x-show="jurusan.length === 0" class="text-[10px] text-amber-600 mt-1 font-bold">⚠️ Belum ada data jurusan</p>
-                </div>
+
+              <div>
+                <label class="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Jurusan</label>
+                <select x-model="kelasForm.majorId" class="w-full px-5 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-white">
+                  <option value="">Pilih Jurusan</option>
+                  <template x-for="j in jurusan" :key="j.id">
+                    <option :value="j.id" x-text="j.code + ' - ' + j.name"></option>
+                  </template>
+                </select>
+                <p x-show="jurusan.length === 0" class="text-[10px] text-amber-600 mt-1 font-bold">⚠️ Belum ada data jurusan</p>
               </div>
             </div>
           </div>
@@ -160,20 +145,20 @@ export function kelasView(): string {
             </div>
             <h3 class="text-3xl font-black text-slate-800 dark:text-white uppercase tracking-tight mb-2">Hapus Kelas?</h3>
             <p class="text-slate-500 dark:text-slate-400 mb-8 font-medium">Data kelas <span class="text-rose-500 font-black underline" x-text="kelasToDelete?.name"></span> akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.</p>
-            
+
             <div class="bg-rose-50 dark:bg-rose-900/20 p-6 rounded-3xl border-2 border-rose-100 dark:border-rose-800 mb-8">
               <label class="block text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-3">Ketik "hapus" untuk konfirmasi</label>
-              <input 
-                type="text" 
-                x-model="kelasDeleteInput" 
+              <input
+                type="text"
+                x-model="kelasDeleteInput"
                 class="w-full px-5 py-3 bg-white dark:bg-slate-900 border-2 border-rose-200 dark:border-rose-800 focus:border-rose-500 focus:ring-0 rounded-2xl text-center font-black text-slate-700 dark:text-white uppercase tracking-widest placeholder:text-slate-300 dark:placeholder:text-slate-700"
                 placeholder="---"
               >
             </div>
 
             <div class="flex flex-col gap-3">
-              <button 
-                @click="confirmDeleteKelas()" 
+              <button
+                @click="confirmDeleteKelas()"
                 class="w-full px-8 py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-2xl font-black transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-rose-200 dark:shadow-none"
                 :disabled="kelasDeleteInput.toLowerCase() !== 'hapus'"
                 :class="{'opacity-50 grayscale cursor-not-allowed': kelasDeleteInput.toLowerCase() !== 'hapus'}"

@@ -10,6 +10,7 @@ import { jurusanData } from './jurusan';
 import { settingsData } from './settings';
 import { studentsData } from './students';
 import { kelasData } from './kelas';
+import { subjectsData } from './subjects';
 
 /**
  * Returns the full inline <script> content for the Alpine.js app function.
@@ -71,6 +72,7 @@ export function appScript(): string {
                 children: [
                   { id: 'jurusan', label: 'Jurusan', icon: 'school' },
                   { id: 'kelas', label: 'Kelas', icon: 'class' },
+                  { id: 'mata-pelajaran', label: 'Mata Pelajaran', icon: 'school' },
                   { id: 'data-siswa', label: 'Data Siswa', icon: 'people' },
                 ]
               },
@@ -101,11 +103,14 @@ export function appScript(): string {
             // ── Kelas Management ────────────────────
             ${kelasData()}
 
-            // ── Initialization ──────────────────────
+            // ── Subjects Management ─────────────────────
+                        ${subjectsData()}
+
+                        // ── Initialization ──────────────────────
             async init() {
               this.darkMode = localStorage.getItem('darkMode') === 'dark';
               if (this.darkMode) document.documentElement.classList.add('dark');
-              
+
               this.settings.apiKey = localStorage.getItem('apiKey') || '';
               this.settings.baseUrl = localStorage.getItem('baseUrl') || '';
               this.settings.provider = localStorage.getItem('provider') || 'openai';
@@ -167,14 +172,20 @@ export function appScript(): string {
 1. "taksonomi" WAJIB berisi Level Bloom (C1-C6).
 2. "elemen" HARUS sesuai dengan input.
 3. JANGAN BERIKAN TEKS PENJELASAN. HANYA JSON.\`;
-              
+
               this.settings.promptATP = localStorage.getItem('promptATP') || 'Buatkan Alur Tujuan Pembelajaran (ATP) untuk CP berikut berdasarkan alokasi waktu dan urutan logis...';
-              
-              // Sequence loading to ensure dependency (Classes need Jurusan)
+
+              // Load student data first
+              await this.loadStudents();
+              // Load attendance data (depends on students)
+              await this.loadAttendanceData();
+              // Load Jurusan
               await this.loadJurusan();
               await this.loadDocuments();
               await this.loadClasses();
-              
+
+              await this.loadSubjects();
+
               this.initAnalisisCP();
             },
 

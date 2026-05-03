@@ -4,7 +4,7 @@
  */
 export function jurusanView(): string {
   return `
-    <div x-show="currentView === 'jurusan'" x-cloak class="space-y-6">
+    <div x-show="currentView === 'jurusan'" x-cloak class="p-6 space-y-6">
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight uppercase">Manajemen Jurusan</h2>

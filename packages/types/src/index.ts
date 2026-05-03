@@ -69,6 +69,10 @@ export type User = z.infer<typeof UserSchema>;
 export type Attendance = z.infer<typeof AttendanceSchema>;
 export type Jurusan = z.infer<typeof MajorSchema>;
 export type Kelas = z.infer<typeof ClassSchema>;
+export type Subject = z.infer<typeof SubjectsSchema>;
 export type Document = z.infer<typeof DocumentSchema>;
 export type AIGeneratorOutput = z.infer<typeof AIGeneratorOutputSchema>;
 export type AttendanceReportResult = z.infer<typeof AttendanceReportResultSchema>;
+
+// Re-export request schemas and types
+export * from './requestSchemas';

@@ -8,6 +8,7 @@ import attendanceRoutes from './routes/attendance';
 import documentRoutes from './routes/documents';
 import classesRoutes from './routes/classes';
 import majorsRoutes from './routes/majors';
+import subjectRoutes from './routes/subjects';
 
 // Middlewares
 import { authMiddleware } from './middlewares/auth';
@@ -42,5 +43,8 @@ app.route('/api/classes', classesRoutes);
 
 app.use('/api/majors/*', authMiddleware);
 app.route('/api/majors', majorsRoutes);
+
+app.use('/api/subjects/*', authMiddleware);
+app.route('/api/subjects', subjectRoutes);
 
 export default app;

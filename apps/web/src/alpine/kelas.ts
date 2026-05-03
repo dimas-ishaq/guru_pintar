@@ -10,7 +10,6 @@ export function kelasData(): string {
             kelasForm: {
               id: null,
               name: '',
-              grade: '10',
               majorId: null
             },
             kelasToDelete: null,
@@ -34,16 +33,15 @@ export function kelasData(): string {
             },
 
             openAddKelasModal() {
-              this.kelasForm = { id: null, name: '', grade: '10', majorId: this.jurusan.length > 0 ? this.jurusan[0].id : null };
+              this.kelasForm = { id: null, name: '', majorId: this.jurusan.length > 0 ? this.jurusan[0].id : null };
               this.isKelasModalOpen = true;
             },
 
             openEditKelas(item) {
-              this.kelasForm = { 
-                id: item.id, 
-                name: item.name, 
-                grade: item.grade, 
-                majorId: item.majorId 
+              this.kelasForm = {
+                id: item.id,
+                name: item.name,
+                majorId: item.majorId
               };
               this.isKelasModalOpen = true;
             },
@@ -71,7 +69,6 @@ export function kelasData(): string {
                   },
                   body: JSON.stringify({
                     name: this.kelasForm.name,
-                    grade: this.kelasForm.grade,
                     majorId: parseInt(this.kelasForm.majorId)
                   })
                 });

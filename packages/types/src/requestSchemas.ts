@@ -72,6 +72,13 @@ export const CreateClassInputSchema = z.object({
   grade: z.string().min(1),
 });
 
+export const CreateSubjectInputSchema = z.object({
+  majorId: z.number().nullable(),
+  classId: z.number().nullable(),
+  name: z.string().min(1),
+  code: z.string().min(1),
+});
+
 // Type exports
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type RegisterInput = z.infer<typeof RegisterSchema>;
@@ -85,3 +92,4 @@ export type ProsemInput = z.infer<typeof ProsemInputSchema>;
 export type ModulAjarInput = z.infer<typeof ModulAjarInputSchema>;
 export type KKTPInput = z.infer<typeof KKTPInputSchema>;
 export type SaveAnalisisCPInput = z.infer<typeof SaveAnalisisCPInputSchema>;
+export type CreateSubjectInput = z.infer<typeof CreateSubjectInputSchema>;

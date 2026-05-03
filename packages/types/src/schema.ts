@@ -47,7 +47,17 @@ export const classes = pgTable('classes', {
   userId: integer('user_id').references(() => users.id),
   majorId: integer('major_id').references(() => majors.id),
   name: varchar('name', { length: 255 }).notNull(), // e.g. 'XII RPL 1'
-  grade: varchar('grade', { length: 50 }).notNull(), // '10', '11', '12'
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const subjects = pgTable('subjects', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  majorId: integer('major_id').references(() => majors.id),
+  classId: integer('class_id').references(() => classes.id),
+  name: varchar('name', { length: 255 }).notNull(), // e.g. 'Pemrograman Dasar'
+  code: varchar('code', { length: 50 }).notNull(), // e.g. 'PDE'
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

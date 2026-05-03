@@ -12,6 +12,7 @@ import { jurusanView } from './views/jurusan';
 import { settingsView } from './views/settings';
 import { studentsView } from './views/students';
 import { kelasView } from './views/kelas';
+import { subjectsView } from './views/subjects';
 
 const app = new Hono();
 
@@ -43,6 +44,7 @@ app.get('/', (c) => {
     settingsView(),
     studentsView(),
     kelasView(),
+        subjectsView(),
   ].join('\n');
 
   return c.html(renderPage(content));
