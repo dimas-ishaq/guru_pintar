@@ -133,10 +133,10 @@ function sidebarHtml(): string {
     </nav>
 
     <div class="mt-auto pt-6 border-t border-slate-200 flex items-center gap-3 px-2 overflow-hidden">
-      <div class="w-10 h-10 rounded-full bg-primary-container dark:bg-primary dark:text-white flex items-center justify-center font-bold shrink-0 shadow-sm">SJ</div>
+      <div class="w-10 h-10 rounded-full bg-primary-container dark:bg-primary dark:text-white flex items-center justify-center font-bold shrink-0 shadow-sm" x-text="user.initials"></div>
       <div x-show="!sidebarCollapsed" x-transition class="flex flex-col overflow-hidden">
-        <span class="text-sm font-semibold text-slate-900 dark:text-white truncate">Sarah Jenkins</span>
-        <span class="text-xs text-slate-500 dark:text-slate-400 truncate">Dep. Sains</span>
+        <span class="text-sm font-semibold text-slate-900 dark:text-white truncate" x-text="user.name"></span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 truncate" x-text="user.department"></span>
       </div>
     </div>
   </aside>`;

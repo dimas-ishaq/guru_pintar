@@ -36,7 +36,8 @@ export function aiGeneratorData(): string {
                               'ai-prosem': 'prosem',
                               'ai-modul': 'modul',
                               'ai-kktp': 'kktp',
-                              'ai-lkpd': 'lkpd'
+                              'ai-lkpd': 'lkpd',
+                              'ai-materi-ajar': 'materi-ajar'
                             };
               const type = typeMap[this.currentView];
 
@@ -46,6 +47,7 @@ export function aiGeneratorData(): string {
                               modul: '/api/documents/generate-modul-ajar',
                               kktp: '/api/documents/generate-kktp',
                               lkpd: '/api/documents/generate-lkpd',
+                              'materi-ajar': '/api/documents/generate-materi-ajar',
                             };
               try {
                 const response = await fetch(endpoints[type], {

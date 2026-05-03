@@ -81,7 +81,7 @@ export function aiGeneratorView(): string {
                   </div>
                 </template>
 
-                <div class="space-y-2" x-show="currentView === 'ai-modul'">
+                <div class="space-y-2" x-show="currentView === 'ai-modul' || currentView === 'ai-materi-ajar'">
                   <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Topik Pembelajaran</label>
                   <input type="text" x-model="formData.topic" placeholder="Contoh: Hukum Newton" class="form-input w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm focus:border-primary focus:ring focus:ring-primary/20 outline-none dark:text-white">
                 </div>

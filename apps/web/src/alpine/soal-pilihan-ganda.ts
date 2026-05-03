@@ -8,9 +8,12 @@ export function soalPilihanGandaData(): string {
             soalPGForm: {
               topik: '',
               cp: '',
-              levelBloom: 'C3',
+              levelBlooms: ['C3'],
               konteksIndustri: '',
               jumlahSoal: 5,
+              lots: 0,
+              mots: 0,
+              hots: 0,
             },
 
             // UI state
@@ -24,12 +27,18 @@ Tugas Anda adalah membuat soal pilihan ganda yang berkualitas tinggi, valid seca
 Kriteria Kualitas Soal:
 1. Validitas: Soal harus sesuai dengan Capaian Pembelajaran (CP).
 2. Pengecoh (Distractors): Pilihan jawaban salah harus masuk akal (plausible), tidak konyol, dan mencerminkan kesalahan umum siswa (misalnya salah logika looping atau typo sintaks).
-3. Level Kognitif: Fokus pada C3 (Aplikasi), C4 (Analisis), dan C5 (Evaluasi) sesuai taksonomi Bloom.
+3. Level Kognitif: Sesuai taksonomi Bloom yang dipilih:
+   - C1: Meng-ingat (Remembering) - Mengidentifikasi, mengingat, dan mengenali informasi
+   - C2: Memahami (Understanding) - Menjelaskan, menginterpretasi, dan memahami makna
+   - C3: Menerapkan (Applying) - Menggunakan informasi dalam situasi baru
+   - C4: Menganalisis (Analyzing) - Memecah informasi menjadi bagian-bagian
+   - C5: Mengevaluasi (Evaluating) - Menilai dan membuat penilaian kritis
+   - C6: Mencipta (Creating) - Menggabungkan elemen untuk membuat sesuatu yang baru
 4. Kode Program: Jika soal pemrograman, gunakan potongan kode yang bersih dan gunakan standar industri (misal: camelCase, indentasi benar).
 5. Bahasa: Gunakan Bahasa Indonesia yang baku dan teknis namun mudah dipahami siswa.\`,
 
             // User prompt template
-            userPromptSoalPG(topik, cp, levelBloom, konteksIndustri, jumlahSoal) {
+            userPromptSoalPG(topik, cp, levelBloom, konteksIndustri, jumlahSoal, lots, mots, hots) {
               return \`Buatkan soal pilihan ganda dengan detail sebagai berikut:
 
 Topik: \${topik}
@@ -37,9 +46,14 @@ Capaian Pembelajaran (CP): \${cp}
 Level Kognitif: \${levelBloom}
 Konteks/Studi Kasus: \${konteksIndustri}
 Jumlah Soal: \${jumlahSoal}
+Distribusi Soal:
+- LOTS (Lower Order Thinking Skills): \${lots} soal
+- MOTS (Medium Order Thinking Skills): \${mots} soal
+- HOTS (Higher Order Thinking Skills): \${hots} soal
 Jumlah Opsi: 5 (A, B, C, D, E)
 
 INSTRUKSI PENTING:
+- Distribusikan soal sesuai kategori LOTS, MOTS, HOTS berdasarkan level kognitif yang sesuai
 - Berikan output HANYA dalam format JSON array
 - JANGAN tambahkan teks apapun di luar JSON
 - JANGAN tambahkan markdown code blocks
@@ -69,8 +83,19 @@ Output HANYA JSON array, tidak ada yang lain.\`;
 
             // Submit form to generate questions
             async submitSoalPilihanGanda() {
-              if (!this.soalPGForm.topik || !this.soalPGForm.cp || !this.soalPGForm.jumlahSoal) {
+              if (!this.soalPGForm.topik || !this.soalPGForm.cp || !this.soalPGForm.levelBlooms.length || !this.soalPGForm.jumlahSoal) {
                 alert('Mohon lengkapi data soal!');
+                return;
+              }
+
+              if (this.soalPGForm.jumlahSoal > 50) {
+                alert('Jumlah soal maksimal adalah 50!');
+                return;
+              }
+
+              const totalDistributed = (this.soalPGForm.lots || 0) + (this.soalPGForm.mots || 0) + (this.soalPGForm.hots || 0);
+              if (totalDistributed > this.soalPGForm.jumlahSoal) {
+                alert('Total jumlah soal LOTS + MOTS + HOTS tidak boleh melebihi jumlah total soal!');
                 return;
               }
 
@@ -81,9 +106,12 @@ Output HANYA JSON array, tidak ada yang lain.\`;
                 const prompt = this.userPromptSoalPG(
                   this.soalPGForm.topik,
                   this.soalPGForm.cp,
-                  this.soalPGForm.levelBloom,
+                  this.soalPGForm.levelBlooms.join(', '),
                   this.soalPGForm.konteksIndustri,
-                  this.soalPGForm.jumlahSoal
+                  this.soalPGForm.jumlahSoal,
+                  this.soalPGForm.lots,
+                  this.soalPGForm.mots,
+                  this.soalPGForm.hots
                 );
 
                 const response = await this.authFetch('/api/soal-pilihan-ganda/generate', {
@@ -143,8 +171,8 @@ Output HANYA JSON array, tidak ada yang lain.\`;
                   }
 
                   // Process questions and add default properties
-                  this.generatedSoalPG = questions.map((q, idx) => ({
-                    nomor: q.nomor || idx + 1,
+                  const newQuestions = questions.map((q, idx) => ({
+                    nomor: this.generatedSoalPG.length + idx + 1,
                     pertanyaan: q.pertanyaan || '',
                     kode_snippet: q.kode_snippet || '',
                     opsi: q.opsi || { A: '', B: '', C: '', D: '', E: '' },
@@ -153,6 +181,7 @@ Output HANYA JSON array, tidak ada yang lain.\`;
                     selectedAnswer: '',
                     showExplanation: false,
                   }));
+                  this.generatedSoalPG = this.generatedSoalPG.concat(newQuestions);
 
                   // Save to localStorage
                   this.saveSoalPilihanGanda();
@@ -173,9 +202,12 @@ Output HANYA JSON array, tidak ada yang lain.\`;
               const data = {
                 topik: this.soalPGForm.topik,
                 cp: this.soalPGForm.cp,
-                levelBloom: this.soalPGForm.levelBloom,
+                levelBlooms: this.soalPGForm.levelBlooms,
                 konteksIndustri: this.soalPGForm.konteksIndustri,
                 jumlahSoal: this.soalPGForm.jumlahSoal,
+                lots: this.soalPGForm.lots,
+                mots: this.soalPGForm.mots,
+                hots: this.soalPGForm.hots,
                 timestamp: new Date().toISOString(),
               };
               localStorage.setItem('soal_pilihan_ganda_form', JSON.stringify(data));
@@ -186,9 +218,12 @@ Output HANYA JSON array, tidak ada yang lain.\`;
               const data = {
                 topik: this.soalPGForm.topik,
                 cp: this.soalPGForm.cp,
-                levelBloom: this.soalPGForm.levelBloom,
+                levelBlooms: this.soalPGForm.levelBlooms,
                 konteksIndustri: this.soalPGForm.konteksIndustri,
                 questions: this.generatedSoalPG,
+                lots: this.soalPGForm.lots,
+                mots: this.soalPGForm.mots,
+                hots: this.soalPGForm.hots,
                 timestamp: new Date().toISOString(),
               };
               localStorage.setItem('soal_pilihan_ganda', JSON.stringify(data));
@@ -198,9 +233,12 @@ Output HANYA JSON array, tidak ada yang lain.\`;
             resetFormData() {
               this.soalPGForm.topik = '';
               this.soalPGForm.cp = '';
-              this.soalPGForm.levelBloom = 'C3';
+              this.soalPGForm.levelBlooms = ['C3'];
               this.soalPGForm.konteksIndustri = '';
               this.soalPGForm.jumlahSoal = 5;
+              this.soalPGForm.lots = 0;
+              this.soalPGForm.mots = 0;
+              this.soalPGForm.hots = 0;
               this.generatedSoalPG = [];
               // Clear saved form data from localStorage
               localStorage.removeItem('soal_pilihan_ganda_form');
@@ -217,9 +255,12 @@ Output HANYA JSON array, tidak ada yang lain.\`;
                   const data = JSON.parse(formData);
                   this.soalPGForm.topik = data.topik || '';
                   this.soalPGForm.cp = data.cp || '';
-                  this.soalPGForm.levelBloom = data.levelBloom || 'C3';
+                  this.soalPGForm.levelBlooms = data.levelBlooms || ['C3'];
                   this.soalPGForm.konteksIndustri = data.konteksIndustri || '';
                   this.soalPGForm.jumlahSoal = data.jumlahSoal || 5;
+                  this.soalPGForm.lots = data.lots || 0;
+                  this.soalPGForm.mots = data.mots || 0;
+                  this.soalPGForm.hots = data.hots || 0;
                 } catch (e) {
                   console.error('Failed to load form data:', e);
                 }
@@ -232,13 +273,72 @@ Output HANYA JSON array, tidak ada yang lain.\`;
                   const data = JSON.parse(fullData);
                   this.soalPGForm.topik = data.topik || '';
                   this.soalPGForm.cp = data.cp || '';
-                  this.soalPGForm.levelBloom = data.levelBloom || 'C3';
+                  this.soalPGForm.levelBlooms = data.levelBlooms || ['C3'];
                   this.soalPGForm.konteksIndustri = data.konteksIndustri || '';
                   this.generatedSoalPG = data.questions || [];
+                  this.soalPGForm.lots = data.lots || 0;
+                  this.soalPGForm.mots = data.mots || 0;
+                  this.soalPGForm.hots = data.hots || 0;
                 } catch (e) {
                   console.error('Failed to load saved questions:', e);
                 }
               }
+            },
+
+            // Export questions to DOC format (HTML saved as .doc)
+            exportSoalPGToDOC() {
+              if (this.generatedSoalPG.length === 0) {
+                alert('Tidak ada soal untuk diekspor');
+                return;
+              }
+
+              // Escape HTML special characters
+              var escHtml = function(s) {
+                var map = {
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  '"': '&quot;',
+                  "'": '&#039;'
+                };
+                return String(s || '').replace(/[&<>"']/g, function(m) { return map[m]; });
+              };
+
+              // Build HTML content that Word can open
+              var htmlContent = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bank Soal Pilihan Ganda</title></head><body>';
+              htmlContent += '<h1>Bank Soal Pilihan Ganda</h1>';
+              htmlContent += '<p><strong>Topik:</strong> ' + escHtml(this.soalPGForm.topik || '') + '</p>';
+              htmlContent += '<p><strong>CP:</strong> ' + escHtml(this.soalPGForm.cp || '') + '</p>';
+              htmlContent += '<p><strong>Level Bloom:</strong> ' + escHtml(this.soalPGForm.levelBlooms.join(', ') || '') + '</p>';
+              htmlContent += '<p><strong>Konteks Industri:</strong> ' + escHtml(this.soalPGForm.konteksIndustri || '') + '</p>';
+              htmlContent += '<p><strong>Distribusi:</strong> LOTS: ' + (this.soalPGForm.lots || 0) + ', MOTS: ' + (this.soalPGForm.mots || 0) + ', HOTS: ' + (this.soalPGForm.hots || 0) + '</p>';
+              htmlContent += '<br>';
+
+              for (var i = 0; i < this.generatedSoalPG.length; i++) {
+                var q = this.generatedSoalPG[i];
+                htmlContent += '<p><strong>Soal ' + q.nomor + ':</strong> ' + escHtml(q.pertanyaan) + '</p>';
+                if (q.kode_snippet) {
+                  htmlContent += '<pre>' + escHtml(q.kode_snippet) + '</pre>';
+                }
+                htmlContent += '<p>A. ' + escHtml(q.opsi.A) + '</p>';
+                htmlContent += '<p>B. ' + escHtml(q.opsi.B) + '</p>';
+                htmlContent += '<p>C. ' + escHtml(q.opsi.C) + '</p>';
+                htmlContent += '<p>D. ' + escHtml(q.opsi.D) + '</p>';
+                htmlContent += '<p>E. ' + escHtml(q.opsi.E) + '</p>';
+                htmlContent += '<p><strong>Jawaban:</strong> ' + escHtml(q.jawaban_benar) + '</p>';
+                htmlContent += '<p><strong>Penjelasan:</strong> ' + escHtml(q.penjelasan) + '</p>';
+                htmlContent += '<br>';
+              }
+
+              htmlContent += '</body></html>';
+
+              var blob = new Blob([htmlContent], { type: 'application/msword' });
+              var url = URL.createObjectURL(blob);
+              var a = document.createElement('a');
+              a.href = url;
+              a.download = 'Soal_Pilihan_Ganda_' + (this.soalPGForm.topik || 'Topik').replace(/[^a-z0-9]/gi, '_').substring(0, 50) + '.doc';
+              a.click();
+              URL.revokeObjectURL(url);
             },
   `;
 }

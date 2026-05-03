@@ -1,4 +1,4 @@
-/** * Alpine.js data module: User Account Management CRUD * Includes user listing, add, edit, delete, and export to Excel with unhashed passwords */ export function usersData(): string {
+/** * Alpine.js data module: User Account Management CRUD * Includes user listing, add, edit, delete */ export function usersData(): string {
   return `
     // -- State --
     users: [],
@@ -170,66 +170,7 @@
       }
     },
 
-    // Export users to Excel with unhashed passwords
-    async exportUsers() {
-      if (this.users.length === 0) {
-        alert('Tidak ada data user untuk diekspor');
-        return;
-      }
 
-      // Add password column - prompt admin for verification
-      const confirmed = confirm('Akses data sensitif: Password akan termasuk dalam export. Lanjutkan?');
-      if (!confirmed) return;
-
-      // If admin needs to see passwords, we assume they enter a new password for export
-      // Otherwise, we can skip password export for security
-      const includePassword = confirm('Sertakan password dalam export? (Centang untuk level admin)');
-
-      try {
-        let exportData = [];
-
-        if (includePassword) {
-          // This is for admin export - will include actual password prompt
-          const passwordPrompt = prompt('Masukkan password baru untuk export (digunakan untuk security dialog):');
-
-          exportData = this.users.map(user => ({
-            'ID': user.id,
-            'Nama': user.name,
-            'Email': user.email,
-            'Role': user.role,
-            'Password (Admin View)': passwordPrompt || '[PROTECTED]',
-            'Created': user.createdAt.split('T')[0]
-          }));
-        } else {
-          exportData = this.users.map(user => ({
-            'ID': user.id,
-            'Nama': user.name,
-            'Email': user.email,
-            'Role': user.role,
-            'Created': user.createdAt.split('T')[0]
-          }));
-        }
-
-        // Load XLSX library if not available
-        if (!window.XLSX) {
-          const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
-          document.head.appendChild(script);
-          await new Promise(resolve => script.onload = resolve);
-        }
-
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const filename = 'data_user_' + new Date().toISOString().split('T')[0] + '.xlsx';
-
-        XLSX.utils.book_append_sheet(wb, ws, 'User Accounts');
-        XLSX.writeFile(wb, filename);
-
-      } catch (error) {
-        console.error('Export error', error);
-        alert('Gagal mengekspor data user.');
-      }
-    },
 
   `;
 }

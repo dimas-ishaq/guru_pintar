@@ -23,14 +23,19 @@ export function appScript(): string {
   const defaultPromptAnalisisCP = 'Anda adalah Pakar Kurikulum Merdeka yang menganalisis CP menjadi ATP yang logis, terukur, relevan dengan jurusan, dan hanya mengembalikan JSON.';
   const raw = `
         window.app = function app() {
-          return {
-            currentView: 'dashboard',
-            darkMode: false,
-            sidebarCollapsed: false,
-            groupState: {
-              ai: true,
-              management: true
-            },
+           return {
+             currentView: 'dashboard',
+             darkMode: false,
+             sidebarCollapsed: false,
+             groupState: {
+               ai: true,
+               management: true
+             },
+             user: {
+               name: '',
+               department: '',
+               initials: ''
+             },
 
             toggleGroup(id) {
               this.groupState[id] = !this.groupState[id];
@@ -66,11 +71,11 @@ export function appScript(): string {
                   { id: 'ai-kktp', label: 'KKTP', icon: 'check_circle' },
                   { id: 'ai-modul', label: 'Modul Ajar', icon: 'school' },
                                     { id: 'ai-lkpd', label: 'LKPD', icon: 'assignment' },
+                                    { id: 'ai-materi-ajar', label: 'Materi Ajar', icon: 'book' },
                                   ]
               },
-              { id: 'attendance', label: 'Kehadiran', icon: 'fact_check' },
-              { id: 'profile', label: 'Profil', icon: 'person' },
-              {
+               { id: 'attendance', label: 'Kehadiran', icon: 'fact_check' },
+               {
                 id: 'management',
                 label: 'Manajemen Data',
                 icon: 'folder_managed',
@@ -132,8 +137,22 @@ export function appScript(): string {
                                       return true;
                                     },
 
-                                    // Helper for authenticated fetch
-                                    async authFetch(url, options = {}) {
+                                     async loadUserInfo() {
+                                       const token = localStorage.getItem('token');
+                                       if (!token) return;
+                                       try {
+                                         const payloadBase64 = token.split('.')[1];
+                                         const payload = JSON.parse(atob(payloadBase64));
+                                         this.user.name = payload.name || 'User';
+                                         this.user.department = payload.department || 'Department';
+                                         this.user.initials = this.user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                                       } catch (e) {
+                                         console.error('Failed to decode token:', e);
+                                       }
+                                     },
+
+                                     // Helper for authenticated fetch
+                                     async authFetch(url, options = {}) {
                                       const token = localStorage.getItem('token');
                                       if (!token) {
                                         this.logout();
@@ -182,16 +201,19 @@ export function appScript(): string {
 
                             await this.loadSubjects();
 
-                            // Load users
-                                                        await this.loadUsers();
+               // Load user info
+               await this.loadUserInfo();
 
-                                                        // Load soal pilihan ganda from localStorage
-                                                        this.loadSoalPilihanGanda();
+               // Load users
+                                                         await this.loadUsers();
 
-                                                        // Load soal essay from localStorage
-                                                        this.loadSoalEssay();
+                                                         // Load soal pilihan ganda from localStorage
+                                                         this.loadSoalPilihanGanda();
 
-                                                        this.initAnalisisCP();
+                                                         // Load soal essay from localStorage
+                                                         this.loadSoalEssay();
+
+                                                         this.initAnalisisCP();
                                         },
 
             logout() {
